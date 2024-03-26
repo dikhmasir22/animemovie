@@ -1,0 +1,222 @@
+<!-- COPYRIGHT 2024 - DAVA IKHSAN ALMASIR -->
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- LINK BOOTSTRAP -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <title>Film Kesukaanku - Dava</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <style>
+        * {
+            font-family: "Gowun Dodum", sans-serif;
+        }
+
+        .judulsaya {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 250px;
+            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://cdn.openart.ai/stable_diffusion/ba30e7c255386915c57287ac46765ee5e548c9b0_2000x2000.webp');
+            background-position: center;
+            background-size: cover;
+            color: white;
+        }
+
+        .judulsaya>button {
+            width: 200px;
+            height: 50px;
+            background-color: transparent;
+            color: white;
+            border-radius: 50px;
+            border: 1px solid white;
+            margin-top: 10px;
+        }
+
+        .judulsaya>button:hover {
+            border: 2px solid white;
+        }
+
+        .dava-style {
+            margin: 20px auto 0px auto;
+            width: 95%;
+            max-width: 1200px;
+        }
+
+        .komensaya {
+            color: gray;
+        }
+
+        .postinganku {
+            width: 95%;
+            max-width: 500px;
+            margin: 20px auto 0px auto;
+            padding: 20px;
+            box-shadow: 0px 0px 3px 0px gray;
+            display: none;
+        }
+
+        .tombol {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .tombol>button {
+            margin-right: 10px;
+        }
+
+        .footer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+            width: 100%;
+            height: 100px;
+            color: white;
+        }
+    </style>
+    <script>
+
+        $(document).ready(function () {
+            listing();
+        });
+
+        function listing() {
+            $.ajax({
+                type: 'GET',
+                url: '/movie',
+                data: {},
+                success: function (response) {
+                    let row = response['film']
+                    for (let i = 0; i < row.length; i++) {
+                        let image = row[i]['image'];
+                        let title = row[i]['title'];
+                        let desc = row[i]['description'];
+                        let star = row[i]['star'];
+                        let comment = row[i]['comment'];
+                        let star_image = '⭐'.repeat(star);
+                        let html_baru = `<div class="col">
+                <div class="card h>100">
+                    <img src="${image}"
+                        class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">${title}</h5>
+                        <p class="card-text">${desc}</p>
+                        <p>${star_image}</p>
+                        <p class="komensaya">${comment}</p>
+                    </div>
+                </div>
+            </div>
+                        `;
+                        $('#kotak-kartu').append(html_baru);
+                    }
+                }
+            })
+        }
+
+        function posting() {
+            let url = $('#url').val();
+            let star = $('#star').val();
+            let comment = $('#comment').val();
+            $.ajax({
+                type: 'POST',
+                url: '/movie',
+                data: {
+                    url_give: url,
+                    star_give: star,
+                    comment_give: comment,
+                },
+                success: function (response) {
+                    swal.fire({
+                        title: "Berhasil!",
+                        text: "Film Berhasil Disimpan",
+                        icon: "success",
+                    });
+                    setTimeout(function () {
+                        location.reload();
+                    }, 2000);
+
+                }
+            });
+        }
+
+
+
+        function open_box() {
+            $('#box-postingan').show();
+        }
+        function close_box() {
+            $('#box-postingan').hide();
+        }
+    </script>
+</head>
+
+<!-- MSIB- FULLSTACK DEVELOPER - DAVA IKHSAN ALMASIR -->
+
+<body>
+    <div class="judulsaya">
+        <h1>Film Kesukaanku</h1>
+        <button onclick="open_box()">Simpan Film Baru</button>
+    </div>
+
+    <div id="box-postingan" class="postinganku">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="url" placeholder="Masukkan Url Film">
+            <label for="floatingInput">Url Film</label>
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="inputGroupSelect01">Bintang</label>
+            <select class="form-select" id="star">
+                <option selected>-- Pilih Rating --</option>
+                <option value="1">⭐</option>
+                <option value="2">⭐⭐</option>
+                <option value="3">⭐⭐⭐</option>
+                <option value="4">⭐⭐⭐⭐</option>
+                <option value="5">⭐⭐⭐⭐⭐</option>
+            </select>
+        </div>
+        <div class="form-floating">
+            <textarea class="form-control" placeholder="Tinggalkan Komentar" id="comment"></textarea>
+            <label for="floatingTextarea">Komentar</label>
+        </div>
+        <div class="tombol">
+            <button onclick="posting()" type="button" class="btn btn-dark">Save</button>
+            <button onclick="close_box()" type="button" class="btn btn-outline-dark">Close</button>
+        </div>
+    </div>
+
+    <div class="dava-style">
+        <div id="kotak-kartu" class="row row-cols-1 row-cols-md-4 g-4">
+        </div>
+    </div>
+
+    <!-- Tak tambahin footer gpp ya Kak, buat naruh cp :v -->
+    <div class="footer">
+        &copy;2024 - Dava Ikhsan Almasir
+    </div>
+</body>
+
+</html>
